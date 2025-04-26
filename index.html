@@ -93,9 +93,8 @@
                 countdown--;
                 if (countdown > 0) {
                     countdownDiv.innerText = countdown;
-                } else if (countdown === 0) {
+                } else (countdown === 0) {
                     countdownDiv.innerText = "Go!";
-                } else {
                     clearInterval(countdownInterval);
                     countdownDiv.style.display = "none";
                     title.style.opacity = "0"; // Fade out title again
