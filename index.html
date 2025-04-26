@@ -95,9 +95,9 @@
                     countdownDiv.innerText = countdown;
                 } else (countdown === 0) {
                     countdownDiv.innerText = "Go!";
+                    title.style.opacity = "0"; // Fade out title again
                     clearInterval(countdownInterval);
                     countdownDiv.style.display = "none";
-                    title.style.opacity = "0"; // Fade out title again
                     startTest(durationSeconds);
                 }
             }, 1000);
