@@ -73,30 +73,38 @@
             alert("Please enter a valid duration (minimum 10 seconds).");
             return;
         }
-
-        title.innerText = "Get ready...";
-        title.style.opacity = "1"; // Make sure it's visible
+    
         instructions.style.display = "none";
         startButton.style.display = "none";
-
-        let countdown = 3;
-        countdownDiv.innerText = countdown;
-        countdownDiv.style.display = "block";
-
-        const countdownInterval = setInterval(() => {
-            countdown--;
-            if (countdown > 0) {
-                countdownDiv.innerText = countdown;
-            } else if (countdown === 0) {
-                countdownDiv.innerText = "Go!";
-            } else {
-                clearInterval(countdownInterval);
-                countdownDiv.style.display = "none";
-                title.style.opacity = "0"; // Fade out title
-                startTest(durationSeconds);
-            }
-        }, 1000);
+    
+        // First, fade out the title
+        title.style.opacity = "0";
+    
+        setTimeout(() => {
+            // After fade-out, change text and fade it back in
+            title.innerText = "Get ready...";
+            title.style.opacity = "1";
+    
+            let countdown = 3;
+            countdownDiv.innerText = countdown;
+            countdownDiv.style.display = "block";
+    
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    countdownDiv.innerText = countdown;
+                } else if (countdown === 0) {
+                    countdownDiv.innerText = "Go!";
+                } else {
+                    clearInterval(countdownInterval);
+                    countdownDiv.style.display = "none";
+                    title.style.opacity = "0"; // Fade out title again
+                    startTest(durationSeconds);
+                }
+            }, 1000);
+        }, 1000); // Wait 1s for fade-out before switching text
     }
+
 
     function startTest(durationSeconds) {
         testRunning = true;
