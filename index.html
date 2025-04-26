@@ -91,18 +91,21 @@
     
             const countdownInterval = setInterval(() => {
                 countdown--;
-                if (countdown > 0) {
+                if (countdown > 1) {
                     countdownDiv.innerText = countdown;
-                } else (countdown === 0) {
-                    countdownDiv.innerText = "Go!";
+                } else if (countdown === 1) {
+                    countdownDiv.innerText = countdown;
                     title.style.opacity = "0"; // Fade out title again
+                 } else if (countdown === 0) {
+                    countdownDiv.innerText = "Go!";
+                } else {
                     clearInterval(countdownInterval);
                     countdownDiv.style.display = "none";
                     startTest(durationSeconds);
-                }
-            }, 1000);
-        }, 1000); // Wait 1s for fade-out before switching text
-    }
+                    }
+                }, 1000);
+            }, 1000); // Wait 1s for fade-out before switching text
+        }
 
 
     function startTest(durationSeconds) {
