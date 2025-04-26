@@ -24,11 +24,15 @@
             font-size: 24px;
             width: 100px;
         }
+        #title {
+            transition: opacity 1s ease;
+        }
     </style>
 </head>
 <body>
 
-<h1>SART Test</h1>
+<h1 id="title">SART Test</h1>
+
 <div id="instructions">
     Press the <b>spacebar</b> for every number <b>EXCEPT "3"</b>.<br><br>
     Enter test duration (seconds): 
@@ -52,6 +56,7 @@
     let testEndTime = 0;
     const digitDisplayTime = 250; // Show number for 250 ms
 
+    const title = document.getElementById("title");
     const digitDiv = document.getElementById("digit");
     const countdownDiv = document.getElementById("countdown");
     const startButton = document.getElementById("start-button");
@@ -68,8 +73,12 @@
             alert("Please enter a valid duration (minimum 10 seconds).");
             return;
         }
+
+        title.innerText = "Get ready...";
+        title.style.opacity = "1"; // Make sure it's visible
         instructions.style.display = "none";
         startButton.style.display = "none";
+
         let countdown = 3;
         countdownDiv.innerText = countdown;
         countdownDiv.style.display = "block";
@@ -83,6 +92,7 @@
             } else {
                 clearInterval(countdownInterval);
                 countdownDiv.style.display = "none";
+                title.style.opacity = "0"; // Fade out title
                 startTest(durationSeconds);
             }
         }, 1000);
@@ -105,11 +115,9 @@
         responded = false;
         startTime = performance.now();
 
-        // Show digit for 250ms
         setTimeout(() => {
             digitDiv.style.display = "none";
 
-            // Give 750ms to respond even after digit disappears
             setTimeout(() => {
                 if (!responded && currentDigit !== "3") {
                     saveResult(false, null);
@@ -126,9 +134,9 @@
             let reactionTime = Math.round(performance.now() - startTime);
             if (!responded) {
                 if (currentDigit === "3") {
-                    saveResult(false, reactionTime); // Should NOT have responded
+                    saveResult(false, reactionTime);
                 } else {
-                    saveResult(true, reactionTime);  // Correct response
+                    saveResult(true, reactionTime);
                 }
                 responded = true;
             }
@@ -150,6 +158,10 @@
         digitDiv.style.display = "none";
         showResults();
         downloadButton.style.display = "inline-block";
+    
+        // Bring back the title
+        title.innerText = "Test Complete!";
+        title.style.opacity = "1"; // Fade back in
     }
 
     function showResults() {
@@ -184,7 +196,7 @@
             <h2>Test Complete!</h2>
             <p><b>Average Reaction Time:</b> ${avgReactionTime} ms</p>
             <p><b>Percent Correct on non-3s:</b> ${percentCorrectNon3}%</p>
-            <p><b>Percent Incorrect Responses on 3s (False Alarms):</b> ${percentIncorrect3}%</p>
+            <p><b>Percent Incorrect Responses on 3s:</b> ${percentIncorrect3}%</p>
         `;
         resultsDiv.style.display = "block";
     }
@@ -207,3 +219,4 @@
 
 </body>
 </html>
+
