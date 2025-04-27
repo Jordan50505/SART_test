@@ -51,9 +51,9 @@
     let results = [];
     let currentDigit = "";
     let startTime = 0;
-    let responded = false;
     let testRunning = false;
     let testEndTime = 0;
+    let respondedThisTrial = false;
     const digitDisplayTime = 250; // Show number for 250 ms
 
     const title = document.getElementById("title");
@@ -73,40 +73,36 @@
             alert("Please enter a valid duration (minimum 10 seconds).");
             return;
         }
-    
+
         instructions.style.display = "none";
         startButton.style.display = "none";
-    
-        // First, fade out the title
         title.style.opacity = "0";
-    
+
         setTimeout(() => {
-            // After fade-out, change text and fade it back in
             title.innerText = "Get ready...";
             title.style.opacity = "1";
-    
+
             let countdown = 3;
             countdownDiv.innerText = countdown;
             countdownDiv.style.display = "block";
-    
+
             const countdownInterval = setInterval(() => {
                 countdown--;
                 if (countdown > 1) {
                     countdownDiv.innerText = countdown;
                 } else if (countdown === 1) {
                     countdownDiv.innerText = countdown;
-                    title.style.opacity = "0"; // Fade out title again
-                 } else if (countdown === 0) {
+                    title.style.opacity = "0";
+                } else if (countdown === 0) {
                     countdownDiv.innerText = "Go!";
                 } else {
                     clearInterval(countdownInterval);
                     countdownDiv.style.display = "none";
                     startTest(durationSeconds);
-                    }
-                }, 1000);
-            }, 1000); // Wait 1s for fade-out before switching text
-        }
-
+                }
+            }, 1000);
+        }, 1000);
+    }
 
     function startTest(durationSeconds) {
         testRunning = true;
@@ -122,17 +118,20 @@
         currentDigit = digits[Math.floor(Math.random() * digits.length)];
         digitDiv.innerText = currentDigit;
         digitDiv.style.display = "block";
-        responded = false;
+        respondedThisTrial = false;
         startTime = performance.now();
 
         setTimeout(() => {
             digitDiv.style.display = "none";
 
             setTimeout(() => {
-                if (!responded && currentDigit !== "3") {
-                    saveResult(false, null);
-                } else if (!responded && currentDigit === "3") {
-                    saveResult(true, null);
+                // If no key was pressed, save as no response
+                if (!respondedThisTrial) {
+                    if (currentDigit === "3") {
+                        saveResult(true, false, null); // Correct inhibition
+                    } else {
+                        saveResult(false, false, null); // Missed a non-3
+                    }
                 }
                 nextTrial();
             }, 750);
@@ -140,20 +139,18 @@
     }
 
     document.addEventListener("keydown", (e) => {
-        if (e.code === "Space" && startTime && testRunning) {
+        if (e.code === "Space" && startTime && testRunning && !respondedThisTrial) {
             let reactionTime = Math.round(performance.now() - startTime);
-            if (!responded) {
-                if (currentDigit === "3") {
-                    saveResult(false, reactionTime);
-                } else {
-                    saveResult(true, reactionTime);
-                }
-                responded = true;
+            respondedThisTrial = true;
+            if (currentDigit === "3") {
+                saveResult(false, true, reactionTime); // Incorrectly pressed on 3
+            } else {
+                saveResult(true, true, reactionTime); // Correctly pressed on non-3
             }
         }
     });
 
-    function saveResult(correct, reactionTime) {
+    function saveResult(correct, responded, reactionTime) {
         results.push({
             trial: results.length + 1,
             digit: currentDigit,
@@ -168,10 +165,8 @@
         digitDiv.style.display = "none";
         showResults();
         downloadButton.style.display = "inline-block";
-    
-        // Bring back the title
         title.innerText = "Test Complete!";
-        title.style.opacity = "1"; // Fade back in
+        title.style.opacity = "1";
     }
 
     function showResults() {
@@ -228,4 +223,3 @@
 
 </body>
 </html>
-
